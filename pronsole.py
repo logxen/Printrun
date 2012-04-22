@@ -869,6 +869,17 @@ class pronsole(cmd.Cmd):
         print "Executes a python command. Example:"
         print "! os.listdir('.')"
         
+    def do_send(self,l):
+        if(self.p and self.p.online):
+            print "SENDING:"+l[5:]
+            self.p.send_now(l)
+        else:
+            print "Printer is not online."
+        return
+
+    def help_send(self):
+        print "Sends a command directly to the printer"
+
     def default(self,l):
         if(l[0] in self.commandprefixes.upper()):
             if(self.p and self.p.online):
