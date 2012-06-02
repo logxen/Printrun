@@ -37,19 +37,26 @@ while 1:
         line=string.split(line)
 
         if(line[0]=="PING"):
-            print("PONG %s\r\n" % line[1])
-            s.send("PONG %s\r\n" % line[1])
+            message="PONG %s\r\n" % line[1]
+            print(message)
+            s.send(message)
         if(line[1]=="PRIVMSG"):
-            if(line[2]==CHAN or line[2]==NICK):
-                if(line[3]==":botsnack"):
+            sender = line[0]
+            context = line[2]
+            if(context==CHAN or context==NICK):
+                address = line[3].strip(":").lower()
+                if(address=="botsnack"):
                     print("botsnack confirmed!")
                     s.send("PRIVMSG %s :%s\r\n" % (CHAN, ":)"))
-                if(line[3]==":%s:" % NICK):
-                    if(line[0]==ADMIN):
-                        if(line[4]=="quit"):
+                if(address==NICK.lower()):
+                    if(sender==ADMIN):
+                        command = line[4]
+                        args = string.join(line[5:])
+                        if(command=="quit"):
                             s.send("QUIT :%s\r\n" % "Pronterbot 0.0.0 Out. Peace.")
-                            sys.exit("QUIT: Request from %s" % line[0])
-                        if(line[4]=="send"):
-                            print("sending command: %s" % string.join(line[5:]))
-                            s.send("PRIVMSG %s :%s\r\n" % (CHAN, string.join(line[5:])))
-                            interp.onecmd(string.join(line[5:]))
+                            interp.onecmd("exit")
+                            sys.exit("QUIT: Request from %s" % sender)
+                        if(command=="send"):
+                            print("SEND: '%s' from %s" % (args, sender))
+                            s.send("PRIVMSG %s :%s\r\n" % (CHAN, args))
+                            interp.onecmd(args)
