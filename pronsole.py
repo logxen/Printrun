@@ -234,8 +234,8 @@ class Settings:
         return dict([(k,getattr(self,k)) for k in self.__dict__.keys() if not k.startswith("_")])
 
 class pronsole(cmd.Cmd):
-    def __init__(self):
-        cmd.Cmd.__init__(self)
+    def __init__(self, completekey="\t", stdin=sys.stdin, stdout=sys.stdout):
+        cmd.Cmd.__init__(self, completekey, stdin, stdout)
         if not READLINE:
             self.completekey=None
         self.p=printcore.printcore()
