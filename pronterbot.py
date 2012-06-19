@@ -5,21 +5,23 @@ import socket
 import string
 import pronsole
 
-HOST="irc.freenode.net"
-PORT=6667
-NICK="Pronterbot"
-IDENT="Pronterbot"
+HOST="ssh.ovx.cc"
+PORT=42001
+NICK="Pronterbot-RPi"
+IDENT="Swarm"
+PASS="mc5401"
 REALNAME="Pronterbot"
 CHAN="#SwarmLink"
 readbuffer=""
-LOUD=0
+LOUD=1
 LOCALECHO=0
-ADMIN=":Logxen!~Logxen@74.63.228.143"
+ADMIN=":Logxen!~Logxen@premiumus.xshellz.com"
 
 sys.__stdout__.write("Attempting to connect to %s on channel %s as %s...\r\n"%(HOST, CHAN, NICK))
 s=socket.socket( )
 s.connect((HOST, PORT))
 s.send("NICK %s\r\n" % NICK)
+s.send("PASS %s:%s\r\n" % (IDENT, PASS))
 s.send("USER %s %s bla :%s\r\n" % (IDENT, HOST, REALNAME))
 s.send("JOIN %s\r\n" % CHAN)
 
@@ -30,7 +32,7 @@ class pronterbot:
             sys.__stdout__.write(msg)
         msg = msg.strip()
         if(len(msg) > 0):
-            s.send("PRIVMSG %s :%s\r\n" % (CHAN, msg))
+            s.send("PRIVMSG %s :<%s> %s\r\n" % (CHAN, NICK, msg))
 
 bot = pronterbot()
 sys.stdout = bot
@@ -62,7 +64,7 @@ while 1:
                 address = line[3].strip(":").lower()
                 if(address=="botsnack"):
                     sys.__stdout__.write("botsnack confirmed!\r\n")
-                    s.send("PRIVMSG %s :%s\r\n" % (CHAN, ":)"))
+                    s.send("PRIVMSG %s :<%s> %s\r\n" % (CHAN, NICK, ":)"))
                 elif(address==NICK.lower()):
                     command = line[4]
                     args = string.join(line[5:])
